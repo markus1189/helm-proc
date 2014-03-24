@@ -28,7 +28,8 @@
 ;; emacs-external unix processes.
 ;;
 ;; With `helm-proc' a helm session is launched and you can perform
-;; various helm actions on processes like sending signals.
+;; various helm actions on processes like sending signals, changing to
+;; the corresponding /proc dir, attach strace...
 
 ;;; Code:
 (require 'helm)
