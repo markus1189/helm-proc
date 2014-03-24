@@ -6,7 +6,7 @@
 ;; Maintainer: Markus Hauck <markus1189@gmail.com>
 ;; Keywords: helm
 ;; Version: 0.0.1
-;; Package-requires: ((helm "1.6.0"))
+;; Package-requires: ((emacs "23") (helm "1.6.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
