@@ -127,9 +127,12 @@ Return a list of pids as result."
         (concat "echo " (shell-quote-argument (read-passwd "Sudo Password: "))
                 (format " | sudo -S strace -p %s" pid)))
        (switch-to-buffer helm-proc-strace-buffer-name)
-       (run-with-timer 10 nil (lambda ()
-                                (kill-process
-                                 (get-process helm-proc-strace-process-name))))))
+       (run-with-timer
+        helm-proc-strace-seconds
+        nil
+        (lambda ()
+          (kill-process
+           (get-process helm-proc-strace-process-name))))))
 
 (defvar helm-source-proc
   '((name . "Processes")
