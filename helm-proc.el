@@ -113,13 +113,16 @@ Return a list of pids as result."
            (time (proced-format-time (assoc-default 'time attr-alist)))
            (state (assoc-default 'state attr-alist))
            (nice (assoc-default 'nice attr-alist))
-           (display (format "%s %s\nTime: '%s' State: '%s' Nice: '%s'\nArgs: '%s'"
-                            pid
-                            command
-                            time
-                            state
-                            nice
-                            args)))
+           (user (assoc-default 'user attr-alist))
+           (display (format
+                     "%s %s\nTime: '%s' State: '%s' Nice: '%s' User: '%s'\nArgs: '%s'"
+                     pid
+                     command
+                     time
+                     state
+                     nice
+                     user
+                     args)))
       (cons display pid))))
 
 (defun helm-proc-action-copy-pid (pid)
