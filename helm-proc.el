@@ -111,10 +111,14 @@ Return a list of pids as result."
            (command (assoc-default 'comm attr-alist))
            (args (assoc-default 'args attr-alist))
            (time (proced-format-time (assoc-default 'time attr-alist)))
-           (display (format "%s %s\nTime: %s\nArgs: %s"
+           (state (assoc-default 'state attr-alist))
+           (nice (assoc-default 'nice attr-alist))
+           (display (format "%s %s\nTime: '%s' State: '%s' Nice: '%s'\nArgs: '%s'"
                             pid
                             command
                             time
+                            state
+                            nice
                             args)))
       (cons display pid))))
 
