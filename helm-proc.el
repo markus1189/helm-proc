@@ -106,7 +106,7 @@ Return a list of pids as result."
 (defun helm-proc--resident-set-size (pid)
   (with-temp-buffer
          (insert-file-contents-literally (format "/proc/%s/status" pid))
-  nn       (goto-char (point-min))
+         (goto-char (point-min))
          (search-forward "VmRSS:" nil t)
          (forward-word)
          (file-size-human-readable
