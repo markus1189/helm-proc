@@ -1,4 +1,4 @@
-;;; helm-proc.el --- Helm interface for emacs-external process management
+;;; helm-proc.el --- Helm interface for managing system processes
 
 ;; Copyright (C) 2014 Markus Hauck
 
