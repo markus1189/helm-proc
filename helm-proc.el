@@ -45,7 +45,7 @@
 (require 'proced)
 
 (defgroup helm-proc nil
-  "Helm source for processes."
+  "Manage system processes with helm."
   :group 'helm)
 
 (defcustom helm-proc-polite-delay 10
@@ -70,7 +70,16 @@
   :type 'string
   :group 'helm-proc)
 
-(defcustom helm-proc-strace-seconds 5
+(defcustom helm-proc-strace-executable "strace"
+  "Name of the strace executable."
+  :type 'string
+  :group 'helm-proc
+  :type '(choice
+          (string :tag "strace" :value "strace")
+          (string :tag "ltrace" :value "ltrace")
+          (string :tag "Custom executable")))
+
+(defcustom helm-proc-strace-seconds 10
   "Number of seconds to collect strace data before process is killed."
   :type 'number
   :group 'helm-proc)
