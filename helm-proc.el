@@ -118,6 +118,10 @@ Return a list of pids as result."
                             args)))
       (cons display pid))))
 
+(defun helm-proc-action-copy-pid (pid)
+  "Copy PID."
+  (kill-new (format "%s" pid)))
+
 (defun helm-proc-action-term (pid)
   "Send TERM to PID."
   (signal-process pid 'INT))
@@ -125,6 +129,14 @@ Return a list of pids as result."
 (defun helm-proc-action-kill (pid)
   "Send KILL to PID."
   (signal-process pid 'KILL))
+
+(defun helm-proc-action-stop (pid)
+  "Send STOP to PID to stop the process."
+  (signal-process pid 'STOP))
+
+(defun helm-proc-action-continue (pid)
+  "Send CONT to PID to continue the process if stopped."
+  (signal-process pid 'CONT))
 
 (defun helm-proc-action-polite-kill (pid)
   "Send TERM to PID, wait for `helm-proc-polite-delay' seconds, then send KILL."
@@ -134,8 +146,6 @@ Return a list of pids as result."
 (defun helm-proc-action-find-dir (pid)
   "Open the /proc dir for PID."
   (find-file (format "/proc/%s/" pid)))
-
-
 
 (defun helm-proc-action-timed-strace (pid)
   "Attach strace to PID, collect output `helm-proc-strace-seconds'."
@@ -159,8 +169,11 @@ Return a list of pids as result."
     (multiline)
     (match . ((lambda (x) t)))
     (action . (("Send TERM" . helm-proc-action-term)
+               ("Copy the pid" . helm-proc-action-copy-pid)
                ("Send TERM, wait then KILL" . helm-proc-action-polite-kill)
                ("Just KILL" . helm-proc-action-kill)
+               ("Stop process" . helm-proc-action-stop)
+               ("Continue if stopped" . helm-proc-action-continue)
                ("Open corresponding /proc dir" . helm-proc-action-find-dir)
                ("Call strace to attach with time limit" . helm-proc-action-timed-strace)))
     (candidates . helm-proc-candidates)))
