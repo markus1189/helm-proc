@@ -103,6 +103,16 @@ Then format elements for display in helm."
 Return a list of pids as result."
   (funcall helm-proc-retrieve-pid-function pattern))
 
+(defun helm-proc--resident-set-size (pid)
+  (with-temp-buffer
+         (insert-file-contents-literally (format "/proc/%s/status" pid))
+  nn       (goto-char (point-min))
+         (search-forward "VmRSS:" nil t)
+         (forward-word)
+         (file-size-human-readable
+          (* (string-to-number (word-at-point)) 1024)
+          'iec)))
+
 (defun helm-proc-format-candidate-for-display (pid)
   "Format PID for display in helm."
   (if (not pid) nil
@@ -114,14 +124,16 @@ Return a list of pids as result."
            (state (assoc-default 'state attr-alist))
            (nice (assoc-default 'nice attr-alist))
            (user (assoc-default 'user attr-alist))
+           (mem (helm-proc--resident-set-size pid))
            (display (format
-                     "%s %s\nTime: '%s' State: '%s' Nice: '%s' User: '%s'\nArgs: '%s'"
+                     "%s %s\nTime: '%s' State: '%s' Nice: '%s' User: '%s' Mem: %s\nArgs: '%s'"
                      pid
                      command
                      time
                      state
                      nice
                      user
+                     mem
                      args)))
       (cons display pid))))
 
