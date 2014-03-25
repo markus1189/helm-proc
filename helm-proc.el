@@ -6,7 +6,7 @@
 ;; Maintainer: Markus Hauck <markus1189@gmail.com>
 ;; Keywords: helm
 ;; Version: 0.0.1
-;; Package-requires: ((emacs "23") (helm "1.6.0"))
+;; Package-requires: ((helm "1.6.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -30,6 +30,15 @@
 ;; With `helm-proc' a helm session is launched and you can perform
 ;; various helm actions on processes like sending signals, changing to
 ;; the corresponding /proc dir, attach strace...
+;;
+;; Example:
+;;
+;; Call `helm-proc' and:
+;; type 'firefox'
+;; => lists all processes named firefox or with firefox in args
+;; press RET to send TERM signal
+;;  or
+;; press TAB for list of possible actions
 
 ;;; Code:
 (require 'helm)
