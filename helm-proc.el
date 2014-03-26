@@ -6,7 +6,7 @@
 ;; Maintainer: Markus Hauck <markus1189@gmail.com>
 ;; Keywords: helm
 ;; Version: 0.0.1
-;; Package-requires: ((helm "1.6.0"))
+;; Package-requires: ((helm "1.6.0") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@
 ;;; Code:
 (require 'helm)
 (require 'proced)
+(require 'cl-lib)
+(require 'thingatpt)
 
 (defgroup helm-proc nil
   "Manage system processes with helm."
@@ -87,16 +89,16 @@
 (defun helm-proc-candidates ()
   "Generate the candidate list for the current `helm-pattern'.
 Then format elements for display in helm."
-  (loop for candidate in (helm-proc-search helm-pattern)
-        collect (helm-proc-format-candidate-for-display candidate)))
+  (cl-loop for candidate in (helm-proc-search helm-pattern)
+           collect (helm-proc-format-candidate-for-display candidate)))
 
 (defun helm-proc-system-pgrep (pattern)
   "Use external pgrep command to retrieve list of pids matching PATTERN."
-  (loop for result in (split-string
-                       (shell-command-to-string
-                        (format "pgrep -f %s" pattern)) "\n")
-        unless (string= "" result)
-        collect (string-to-number result)))
+  (cl-loop for result in (split-string
+                          (shell-command-to-string
+                           (format "pgrep -f %s" pattern)) "\n")
+           unless (string= "" result)
+           collect (string-to-number result)))
 
 (defun helm-proc-search (pattern)
   "Call `helm-proc-retrieve-pid-function' with PATTERN.
