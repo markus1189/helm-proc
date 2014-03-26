@@ -5,7 +5,7 @@
 ;; Author: Markus Hauck <markus1189@gmail.com>
 ;; Maintainer: Markus Hauck <markus1189@gmail.com>
 ;; Keywords: helm
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Package-requires: ((helm "1.6.0") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -86,11 +86,21 @@
   :type 'number
   :group 'helm-proc)
 
+(defcustom helm-proc-formatting-function 'helm-proc-format-candidate-for-display
+  "Function used to display candidates.
+
+It takes one argument, the pid and returns (DISPLAY . pid) where
+DISPLAY can be any string."
+  :group 'helm-proc
+  :type '(choice
+          (function-item  :tag "builtin-multiline" :value helm-proc-format-candidate-for-display)
+          (function :tag "Custom function")))
+
 (defun helm-proc-candidates ()
   "Generate the candidate list for the current `helm-pattern'.
 Then format elements for display in helm."
   (cl-loop for candidate in (helm-proc-search helm-pattern)
-           collect (helm-proc-format-candidate-for-display candidate)))
+           collect (funcall helm-proc-formatting-function candidate)))
 
 (defun helm-proc-system-pgrep (pattern)
   "Use external pgrep command to retrieve list of pids matching PATTERN."
@@ -129,7 +139,7 @@ Return a list of pids as result."
            (user (assoc-default 'user attr-alist))
            (mem (helm-proc--resident-set-size pid))
            (display (format
-                     "%s %s\nTime: '%s' State: '%s' Nice: '%s' User: '%s' Mem: %s\nArgs: '%s'"
+                     "%s %s\nTime: %s | State: %s | Nice: %s | User: %s | Mem: %s\nArgs: %s"
                      pid
                      command
                      time
