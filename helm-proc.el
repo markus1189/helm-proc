@@ -106,6 +106,7 @@ Return a list of pids as result."
   (funcall helm-proc-retrieve-pid-function pattern))
 
 (defun helm-proc--resident-set-size (pid)
+  "Determine the resident set size of a process given by PID."
   (with-temp-buffer
          (insert-file-contents-literally (format "/proc/%s/status" pid))
          (goto-char (point-min))
