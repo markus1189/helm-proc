@@ -1,6 +1,6 @@
 #!/bin/sh
-set -e
 
+PATH="$HOME/.cask/bin:$PATH"
 RESULT="$(cask exec cask build 2>&1)"
 
 if echo "$RESULT" | grep -i -e warning -e error; then
