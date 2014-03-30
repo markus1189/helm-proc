@@ -202,7 +202,7 @@ Return a list of pids as result."
     (match . ((lambda (x) t)))
     (action . (("Send TERM" . helm-proc-action-term)
                ("Copy the pid" . helm-proc-action-copy-pid)
-               ("Send TERM, wait then KILL" . helm-proc-action-polite-kill)
+               ("Polite KILL (TERM -> KILL)" . helm-proc-action-polite-kill)
                ("Just KILL" . helm-proc-action-kill)
                ("Stop process" . helm-proc-action-stop)
                ("Continue if stopped" . helm-proc-action-continue)
