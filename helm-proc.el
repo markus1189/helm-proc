@@ -5,7 +5,7 @@
 ;; Author: Markus Hauck <markus1189@gmail.com>
 ;; Maintainer: Markus Hauck <markus1189@gmail.com>
 ;; Keywords: helm
-;; Version: 0.0.2
+;; Version: 0.0.3
 ;; Package-requires: ((helm "1.6.0") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@
 
 ;;; Code:
 (require 'helm)
+(require 'helm-utils)
 (require 'proced)
 (require 'cl-lib)
 (require 'thingatpt)
@@ -173,7 +174,10 @@ Return a list of pids as result."
 (defun helm-proc-action-polite-kill (pid)
   "Send TERM to PID, wait for `helm-proc-polite-delay' seconds, then send KILL."
   (helm-proc-action-term pid)
-  (run-with-timer helm-proc-polite-delay nil 'helm-proc-action-kill pid))
+  (run-with-timer helm-proc-polite-delay nil
+                  (lambda (pid)
+                    (helm-proc-action-kill pid)
+                    (message (format "Send KILL to %s" pid))) pid))
 
 (defun helm-proc-action-find-dir (pid)
   "Open the /proc dir for PID."
@@ -194,20 +198,47 @@ Return a list of pids as result."
           (kill-process
            (get-process helm-proc-strace-process-name))))))
 
+(defun helm-proc-run-kill ()
+  "Execute kill action from `helm-source-proc'."
+  (interactive)
+  (with-helm-alive-p
+    (helm-quit-and-execute-action 'helm-proc-action-kill)))
+
+(defun helm-proc-run-polite ()
+  "Execute polite kill action from `helm-source-proc'."
+  (interactive)
+  (with-helm-alive-p
+    (helm-quit-and-execute-action 'helm-proc-action-polite-kill)))
+
+(defun helm-proc-run-term ()
+  "Execute term action from `helm-source-proc'."
+  (interactive)
+  (with-helm-alive-p
+    (helm-quit-and-execute-action 'helm-proc-action-term)))
+
+(defvar helm-proc-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map helm-map)
+    (define-key map (kbd "C-c t") 'helm-proc-run-term)
+    (define-key map (kbd "C-c k") 'helm-proc-run-kill)
+    (define-key map (kbd "C-c p") 'helm-proc-run-polite)
+    map))
+
 (defvar helm-source-proc
-  '((name . "Processes")
+  `((name . "Processes")
     (volatile)
     (requires-pattern . 2)
     (multiline)
     (match . ((lambda (x) t)))
-    (action . (("Send TERM" . helm-proc-action-term)
+    (action . (("Send TERM (C-c t)" . helm-proc-action-term)
                ("Copy the pid" . helm-proc-action-copy-pid)
-               ("Polite KILL (TERM -> KILL)" . helm-proc-action-polite-kill)
-               ("Just KILL" . helm-proc-action-kill)
+               ("Polite KILL (TERM -> KILL) (C-c p)" . helm-proc-action-polite-kill)
+               ("Just KILL (C-c k)" . helm-proc-action-kill)
                ("Stop process" . helm-proc-action-stop)
                ("Continue if stopped" . helm-proc-action-continue)
                ("Open corresponding /proc dir" . helm-proc-action-find-dir)
                ("Call strace to attach with time limit" . helm-proc-action-timed-strace)))
+    (keymap . ,helm-proc-map)
     (candidates . helm-proc-candidates)))
 
 ;;;###autoload
