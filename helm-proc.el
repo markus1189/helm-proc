@@ -245,6 +245,7 @@ Return a list of pids as result."
                ("Call strace to attach with time limit" . helm-proc-action-timed-strace)))
     (keymap . ,helm-proc-map)
     (persistent-action . helm-proc-action-term-and-update)
+    (persistent-help . "Send TERM to process")
     (candidates . helm-proc-candidates)))
 
 ;;;###autoload
