@@ -105,11 +105,14 @@ Then format elements for display in helm."
 
 (defun helm-proc-system-pgrep (pattern)
   "Use external pgrep command to retrieve list of pids matching PATTERN."
-  (cl-loop for result in (split-string
-                          (shell-command-to-string
-                           (format "pgrep -f %s" pattern)) "\n")
-           unless (string= "" result)
-           collect (string-to-number result)))
+  (let ((to-number (string-to-number pattern)))
+    (append nil
+     (if (not (equal 0 to-number)) `(,to-number) nil)
+     (cl-loop for result in (split-string
+                             (shell-command-to-string
+                              (format "pgrep -f %s" pattern)) "\n")
+              unless (string= "" result)
+              collect (string-to-number result)))))
 
 (defun helm-proc-search (pattern)
   "Call `helm-proc-retrieve-pid-function' with PATTERN.
