@@ -174,13 +174,18 @@ Return a list of pids as result."
   "Send CONT to PID to continue the process if stopped."
   (signal-process pid 'CONT))
 
+(defun helm-proc-process-alive-p (pid)
+  "If process with PID is alive return t else nil."
+  (if (proced-process-attributes (list pid)) t nil))
+
 (defun helm-proc-action-polite-kill (pid)
   "Send TERM to PID, wait for `helm-proc-polite-delay' seconds, then send KILL."
   (helm-proc-action-term pid)
   (run-with-timer helm-proc-polite-delay nil
                   (lambda (pid)
-                    (helm-proc-action-kill pid)
-                    (message (format "Send KILL to %s" pid))) pid))
+                    (unless (not (helm-proc-process-alive-p pid))
+                      (helm-proc-action-kill pid)
+                      (message (format "Sent KILL to %s" pid)))) pid))
 
 (defun helm-proc-action-find-dir (pid)
   "Open the /proc dir for PID."
