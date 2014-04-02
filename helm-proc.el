@@ -160,7 +160,7 @@ Return a list of pids as result."
 
 (defun helm-proc-action-term (pid)
   "Send TERM to PID."
-  (signal-process pid 'INT))
+  (signal-process pid 'TERM))
 
 (defun helm-proc-action-kill (pid)
   "Send KILL to PID."
