@@ -216,6 +216,11 @@ Return a list of pids as result."
   (with-helm-alive-p
     (helm-quit-and-execute-action 'helm-proc-action-term)))
 
+(defun helm-proc-action-term-and-update (candidate)
+  "Run `helm-proc-action-term' on CANDIDATE and call `helm-update'."
+  (helm-proc-action-term candidate)
+  (helm-update))
+
 (defvar helm-proc-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map helm-map)
@@ -239,6 +244,7 @@ Return a list of pids as result."
                ("Open corresponding /proc dir" . helm-proc-action-find-dir)
                ("Call strace to attach with time limit" . helm-proc-action-timed-strace)))
     (keymap . ,helm-proc-map)
+    (persistent-action . helm-proc-action-term-and-update)
     (candidates . helm-proc-candidates)))
 
 ;;;###autoload
