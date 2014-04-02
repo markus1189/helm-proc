@@ -194,9 +194,7 @@ Return a list of pids as result."
         (concat "echo " (shell-quote-argument (read-passwd "Sudo Password: "))
                 (format " | sudo -S strace -p %s" pid)))
        (switch-to-buffer helm-proc-strace-buffer-name)
-       (run-with-timer
-        helm-proc-strace-seconds
-        nil
+       (run-with-timer helm-proc-strace-seconds nil
         (lambda ()
           (kill-process
            (get-process helm-proc-strace-process-name))))))
@@ -213,15 +211,27 @@ Return a list of pids as result."
   (with-helm-alive-p
     (helm-quit-and-execute-action 'helm-proc-action-polite-kill)))
 
+(defun helm-proc-run-stop ()
+  "Execute stop action from `helm-source-proc'."
+  (interactive)
+  (with-helm-alive-p
+    (helm-quit-and-execute-action 'helm-proc-action-stop)))
+
+(defun helm-proc-run-continue ()
+  "Execute continue action from `helm-source-proc'."
+  (interactive)
+  (with-helm-alive-p
+    (helm-quit-and-execute-action 'helm-proc-action-continue)))
+
 (defun helm-proc-run-term ()
   "Execute term action from `helm-source-proc'."
   (interactive)
   (with-helm-alive-p
     (helm-quit-and-execute-action 'helm-proc-action-term)))
 
-(defun helm-proc-action-term-and-update (candidate)
-  "Run `helm-proc-action-term' on CANDIDATE and call `helm-update'."
-  (helm-proc-action-term candidate)
+(defun helm-proc-action-polite-kill-and-update (candidate)
+  "Run `helm-proc-action-polite-kill' on CANDIDATE and call `helm-update'."
+  (helm-proc-action-polite-kill candidate)
   (helm-update))
 
 (defvar helm-proc-map
@@ -230,6 +240,8 @@ Return a list of pids as result."
     (define-key map (kbd "C-c t") 'helm-proc-run-term)
     (define-key map (kbd "C-c k") 'helm-proc-run-kill)
     (define-key map (kbd "C-c p") 'helm-proc-run-polite)
+    (define-key map (kbd "C-c s") 'helm-proc-run-stop)
+    (define-key map (kbd "C-c c") 'helm-proc-run-continue)
     map))
 
 (defvar helm-source-proc
@@ -242,13 +254,13 @@ Return a list of pids as result."
                ("Copy the pid" . helm-proc-action-copy-pid)
                ("Polite KILL (TERM -> KILL) (C-c p)" . helm-proc-action-polite-kill)
                ("Just KILL (C-c k)" . helm-proc-action-kill)
-               ("Stop process" . helm-proc-action-stop)
-               ("Continue if stopped" . helm-proc-action-continue)
+               ("Stop process (C-c s)" . helm-proc-action-stop)
+               ("Continue if stopped (C-c c)" . helm-proc-action-continue)
                ("Open corresponding /proc dir" . helm-proc-action-find-dir)
                ("Call strace to attach with time limit" . helm-proc-action-timed-strace)))
     (keymap . ,helm-proc-map)
-    (persistent-action . helm-proc-action-term-and-update)
-    (persistent-help . "Send TERM to process")
+    (persistent-action . helm-proc-action-polite-kill-and-update)
+    (persistent-help . "Politely kill process")
     (candidates . helm-proc-candidates)))
 
 ;;;###autoload
