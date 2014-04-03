@@ -5,7 +5,7 @@
 ;; Author: Markus Hauck <markus1189@gmail.com>
 ;; Maintainer: Markus Hauck <markus1189@gmail.com>
 ;; Keywords: helm
-;; Version: 0.0.3
+;; Version: 0.0.4
 ;; Package-requires: ((helm "1.6.0") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -70,6 +70,16 @@
 
 (defcustom helm-proc-strace-process-name "helm-proc-strace"
   "Used as the name for the strace process started by helm-proc."
+  :type 'string
+  :group 'helm-proc)
+
+(defcustom helm-proc-lsof-buffer-name "*helm-proc-lsof*"
+  "Name of the buffer used for the output of lsof used by helm-proc."
+  :type 'string
+  :group 'helm-proc)
+
+(defcustom helm-proc-lsof-process-name "helm-proc-lsof"
+  "Process name when executing lsof from helm-proc."
   :type 'string
   :group 'helm-proc)
 
@@ -198,11 +208,24 @@ Return a list of pids as result."
         helm-proc-strace-buffer-name
         (concat "echo " (shell-quote-argument (read-passwd "Sudo Password: "))
                 (format " | sudo -S strace -p %s" pid)))
+       (if (buffer-live-p helm-proc-strace-buffer-name)
+           (kill-buffer helm-proc-strace-buffer-name))
        (switch-to-buffer helm-proc-strace-buffer-name)
        (run-with-timer helm-proc-strace-seconds nil
-        (lambda ()
-          (kill-process
-           (get-process helm-proc-strace-process-name))))))
+                       (lambda ()
+                         (kill-process
+                          (get-process helm-proc-strace-process-name))))))
+
+(defun helm-proc-action-lsof (pid)
+  "List all files opened by process with PID."
+  (start-process-shell-command
+   helm-proc-lsof-process-name
+   helm-proc-lsof-buffer-name
+   (format "lsof -p %s" pid))
+  (if (buffer-live-p helm-proc-lsof-buffer-name)
+      (kill-buffer helm-proc-lsof-buffer-name))
+  (switch-to-buffer helm-proc-lsof-buffer-name)
+  (setq buffer-read-only t))
 
 (defun helm-proc-run-kill ()
   "Execute kill action from `helm-source-proc'."
@@ -262,7 +285,8 @@ Return a list of pids as result."
                ("Stop process (C-c s)" . helm-proc-action-stop)
                ("Continue if stopped (C-c c)" . helm-proc-action-continue)
                ("Open corresponding /proc dir" . helm-proc-action-find-dir)
-               ("Call strace to attach with time limit" . helm-proc-action-timed-strace)))
+               ("Call strace to attach with time limit" . helm-proc-action-timed-strace)
+               ("List opened files (lsof)" . helm-proc-action-lsof)))
     (keymap . ,helm-proc-map)
     (persistent-action . helm-proc-action-polite-kill-and-update)
     (persistent-help . "Politely kill process")
