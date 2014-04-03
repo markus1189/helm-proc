@@ -176,7 +176,7 @@ Return a list of pids as result."
 
 (defun helm-proc-process-alive-p (pid)
   "If process with PID is alive return t else nil."
-  (if (proced-process-attributes (list pid)) t nil))
+  (file-readable-p (format "/proc/%s/" pid)))
 
 (defun helm-proc-action-polite-kill (pid)
   "Send TERM to PID, wait for `helm-proc-polite-delay' seconds, then send KILL."
