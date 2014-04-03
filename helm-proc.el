@@ -203,13 +203,13 @@ Return a list of pids as result."
 
 (defun helm-proc-action-timed-strace (pid)
   "Attach strace to PID, collect output `helm-proc-strace-seconds'."
+  (if (get-buffer helm-proc-strace-buffer-name)
+      (kill-buffer helm-proc-strace-buffer-name))
   (and (start-process-shell-command
         helm-proc-strace-process-name
         helm-proc-strace-buffer-name
         (concat "echo " (shell-quote-argument (read-passwd "Sudo Password: "))
                 (format " | sudo -S strace -p %s" pid)))
-       (if (buffer-live-p helm-proc-strace-buffer-name)
-           (kill-buffer helm-proc-strace-buffer-name))
        (switch-to-buffer helm-proc-strace-buffer-name)
        (run-with-timer helm-proc-strace-seconds nil
                        (lambda ()
@@ -218,12 +218,12 @@ Return a list of pids as result."
 
 (defun helm-proc-action-lsof (pid)
   "List all files opened by process with PID."
+  (if (get-buffer helm-proc-lsof-buffer-name)
+      (kill-buffer helm-proc-lsof-buffer-name))
   (start-process-shell-command
    helm-proc-lsof-process-name
    helm-proc-lsof-buffer-name
    (format "lsof -p %s" pid))
-  (if (buffer-live-p helm-proc-lsof-buffer-name)
-      (kill-buffer helm-proc-lsof-buffer-name))
   (switch-to-buffer helm-proc-lsof-buffer-name)
   (setq buffer-read-only t))
 
