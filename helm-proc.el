@@ -195,7 +195,9 @@ Return a list of pids as result."
                   (lambda (pid)
                     (unless (not (helm-proc-process-alive-p pid))
                       (helm-proc-action-kill pid)
-                      (message (format "Sent KILL to %s" pid)))) pid))
+                      (message (format "Sent KILL to %s" pid))
+                      (if helm-alive-p (helm-update))))
+                  pid))
 
 (defun helm-proc-action-find-dir (pid)
   "Open the /proc dir for PID."
