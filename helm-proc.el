@@ -43,6 +43,7 @@
 ;;; Code:
 (require 'helm)
 (require 'helm-utils)
+(require 'helm-help)
 (require 'proced)
 (require 'cl-lib)
 (require 'thingatpt)
@@ -272,7 +273,37 @@ Return a list of pids as result."
     (define-key map (kbd "C-c p") 'helm-proc-run-polite)
     (define-key map (kbd "C-c s") 'helm-proc-run-stop)
     (define-key map (kbd "C-c c") 'helm-proc-run-continue)
+    (define-key map (kbd "C-c ?") 'helm-proc-help)
     map))
+
+(defvar helm-proc-help-message
+  "== Helm proc ==\
+\nSpecific commands for Helm proc:
+\\<helm-proc-map>\
+\\[helm-proc-help]\t\tShow this help.
+\\[helm-proc-run-term]\t\tSend the TERM signal.
+\\[helm-proc-run-kill]\t\tSend the KILL signal.
+\\[helm-proc-run-polite]\t\tSend TERM to PID, wait for `helm-proc-polite-delay' seconds, then send KILL.
+\\[helm-proc-run-stop]\t\tSend the STOP signal.
+\\[helm-proc-run-continue]\t\tSend the CONT signal.
+\n== Helm Map ==
+\\{helm-map}")
+
+(defun helm-proc-help ()
+  "Display help for `helm-proc'."
+  (interactive)
+  (let ((helm-help-message helm-proc-help-message))
+    (helm-help)))
+
+(defvar helm-proc-mode-line-string '("Ps" "\
+\\<helm-proc-map>\
+\\[helm-proc-help]:Help|\
+\\[helm-proc-run-term]:TERM \
+\\[helm-proc-run-polite]:Polite KILL|\
+\\[helm-proc-run-kill]:KILL|\
+\\[helm-proc-run-stop]:STOP|\
+\\[helm-proc-run-continue]:CONT")
+  "Help string displayed in mode-line in `helm-proc'.")
 
 (defvar helm-source-proc
   `((name . "Processes")
@@ -292,7 +323,8 @@ Return a list of pids as result."
     (keymap . ,helm-proc-map)
     (persistent-action . helm-proc-action-polite-kill-and-update)
     (persistent-help . "Politely kill process")
-    (candidates . helm-proc-candidates)))
+    (candidates . helm-proc-candidates)
+    (mode-line . helm-proc-mode-line-string)))
 
 ;;;###autoload
 (defun helm-proc ()
