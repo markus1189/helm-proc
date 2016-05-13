@@ -230,6 +230,17 @@ Return a list of pids as result."
   (switch-to-buffer helm-proc-lsof-buffer-name)
   (setq buffer-read-only t))
 
+(defun helm-proc-action-gdb (pid)
+  "Attach gdb to PID."
+  (setq
+   gud-gdb-command-name
+   (format
+    "gdb -i=mi %s %s"
+    (file-truename
+     (format "/proc/%s/exe" pid))
+    pid))
+  (call-interactively 'gdb))
+
 (defun helm-proc-run-kill ()
   "Execute kill action from `helm-source-proc'."
   (interactive)
@@ -319,7 +330,8 @@ Return a list of pids as result."
                ("Continue if stopped (C-c c)" . helm-proc-action-continue)
                ("Open corresponding /proc dir" . helm-proc-action-find-dir)
                ("Call strace to attach with time limit" . helm-proc-action-timed-strace)
-               ("List opened files (lsof)" . helm-proc-action-lsof)))
+               ("List opened files (lsof)" . helm-proc-action-lsof)
+               ("Attach gdb to process" . helm-proc-action-gdb)))
     (keymap . ,helm-proc-map)
     (persistent-action . helm-proc-action-polite-kill-and-update)
     (persistent-help . "Politely kill process")
