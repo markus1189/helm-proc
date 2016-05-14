@@ -47,6 +47,7 @@
 (require 'proced)
 (require 'cl-lib)
 (require 'thingatpt)
+(require 'gdb-mi)
 
 (defgroup helm-proc nil
   "Manage system processes with helm."
