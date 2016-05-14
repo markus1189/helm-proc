@@ -234,31 +234,31 @@ Return a list of pids as result."
   "Execute kill action from `helm-source-proc'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action 'helm-proc-action-kill)))
+    (helm-exit-and-execute-action 'helm-proc-action-kill)))
 
 (defun helm-proc-run-polite ()
   "Execute polite kill action from `helm-source-proc'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action 'helm-proc-action-polite-kill)))
+    (helm-exit-and-execute-action 'helm-proc-action-polite-kill)))
 
 (defun helm-proc-run-stop ()
   "Execute stop action from `helm-source-proc'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action 'helm-proc-action-stop)))
+    (helm-exit-and-execute-action 'helm-proc-action-stop)))
 
 (defun helm-proc-run-continue ()
   "Execute continue action from `helm-source-proc'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action 'helm-proc-action-continue)))
+    (helm-exit-and-execute-action 'helm-proc-action-continue)))
 
 (defun helm-proc-run-term ()
   "Execute term action from `helm-source-proc'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action 'helm-proc-action-term)))
+    (helm-exit-and-execute-action 'helm-proc-action-term)))
 
 (defun helm-proc-action-polite-kill-and-update (candidate)
   "Run `helm-proc-action-polite-kill' on CANDIDATE and call `helm-update'."
