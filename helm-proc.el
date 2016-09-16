@@ -233,13 +233,13 @@ Return a list of pids as result."
 
 (defun helm-proc-action-gdb (pid)
   "Attach gdb to PID."
-  (setq
-   gud-gdb-command-name
-   (format
-    "gdb -i=mi %s %s"
-    (file-truename
-     (format "/proc/%s/exe" pid))
-    pid))
+  (add-to-list
+    'gud-gdb-history
+    (format
+     "gdb -i=mi %s %s"
+     (file-truename
+      (format "/proc/%s/exe" pid))
+     pid))
   (call-interactively 'gdb))
 
 (defun helm-proc-run-kill ()
