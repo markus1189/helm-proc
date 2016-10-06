@@ -113,6 +113,7 @@ DISPLAY can be any string."
   "Generate the candidate list for the current `helm-pattern'.
 Then format elements for display in helm."
   (cl-loop for candidate in (helm-proc-search helm-pattern)
+           when (assoc-default 'comm (cdar (proced-process-attributes `(,candidate))))
            collect (funcall helm-proc-formatting-function candidate)))
 
 (defun helm-proc-system-pgrep (pattern)
